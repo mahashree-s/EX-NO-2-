@@ -26,18 +26,122 @@ To encrypt a message, one would break the message into digrams (groups of 2 lett
 ## ALGORITHM:
 
 STEP-1: Read the plain text from the user.
+
 STEP-2: Read the keyword from the user.
+
 STEP-3: Arrange the keyword without duplicates in a 5*5 matrix in the row order and fill the remaining cells with missed out letters in alphabetical order. Note that ‘i’ and ‘j’ takes the same cell.
+
 STEP-4: Group the plain text in pairs and match the corresponding corner letters by forming a rectangular grid.
+
 STEP-5: Display the obtained cipher text.
 
 
 
 
 Program:
+```c
 
+#include <stdio.h>
+#include <string.h>
 
+#define SIZE 100
+
+void generateKey(char key[], char t[5][5]) {
+    int used[26] = {0}, i = 0, j = 0;
+    used['j' - 'a'] = 1;
+
+    for (int k = 0; key[k]; k++) {
+        char c = key[k];
+        if (c >= 'A' && c <= 'Z') c += 32;
+        if (c == 'j') c = 'i';
+
+        if (c >= 'a' && c <= 'z' && !used[c - 'a']) {
+            t[i][j++] = c;
+            used[c - 'a'] = 1;
+            if (j == 5) j = 0, i++;
+        }
+    }
+
+    for (int k = 0; k < 26; k++) {
+        if (!used[k]) {
+            t[i][j++] = 'a' + k;
+            if (j == 5) j = 0, i++;
+        }
+    }
+}
+
+void encrypt(char s[], char t[5][5], int n) {
+    int r1, c1, r2, c2;
+
+    for (int k = 0; k < n; k += 2) {
+        char a = s[k], b = s[k + 1];
+        if (a == 'j') a = 'i';
+        if (b == 'j') b = 'i';
+
+        for (int i = 0; i < 5; i++)
+            for (int j = 0; j < 5; j++) {
+                if (t[i][j] == a) r1 = i, c1 = j;
+                if (t[i][j] == b) r2 = i, c2 = j;
+            }
+
+        if (r1 == r2) {
+            s[k] = t[r1][(c1 + 1) % 5];
+            s[k + 1] = t[r2][(c2 + 1) % 5];
+        } else if (c1 == c2) {
+            s[k] = t[(r1 + 1) % 5][c1];
+            s[k + 1] = t[(r2 + 1) % 5][c2];
+        } else {
+            s[k] = t[r1][c2];
+            s[k + 1] = t[r2][c1];
+        }
+    }
+}
+
+int main() {
+    char key[SIZE], plain[SIZE], t[5][5], s[SIZE];
+    int n = 0;
+
+    printf("Enter keyword: ");
+    fgets(key, SIZE, stdin);
+    key[strcspn(key, "\n")] = '\0';
+
+    printf("Enter plaintext: ");
+    fgets(plain, SIZE, stdin);
+    plain[strcspn(plain, "\n")] = '\0';
+
+    int j = 0;
+    for (int i = 0; plain[i]; i++) {
+        char c = plain[i];
+        if (c >= 'A' && c <= 'Z') c += 32;
+        if (c >= 'a' && c <= 'z') s[j++] = c;
+    }
+    s[j] = '\0';
+
+    for (int i = 0; i < j; i++) {
+        if (s[i] == 'j') s[i] = 'i';
+    }
+
+    for (int i = 0; i < j; i++) {
+        s[n++] = s[i];
+        if (i + 1 < j && s[i] == s[i + 1]) {
+            s[n++] = 'x';
+        }
+    }
+
+    if (n % 2 != 0) s[n++] = 'x';
+    s[n] = '\0';
+
+    generateKey(key, t);
+    encrypt(s, t, n);
+
+    printf("Cipher text: %s\n", s);
+    return 0;
+}
+
+```
 
 
 
 Output:
+
+<img width="1121" height="779" alt="image" src="https://github.com/user-attachments/assets/f60879f1-976d-4654-9b23-8e4678f7f8ed" />
