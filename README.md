@@ -38,7 +38,7 @@ STEP-5: Display the obtained cipher text.
 
 
 
-Program:
+## Program:
 ```c
 
 #include <stdio.h>
@@ -142,6 +142,9 @@ int main() {
 
 
 
-Output:
+## Output:
 
 <img width="1121" height="779" alt="image" src="https://github.com/user-attachments/assets/f60879f1-976d-4654-9b23-8e4678f7f8ed" />
+
+## RESULT:
+Thus, the C program to implement the Playfair substitution technique was executed successfully, and the plaintext was encrypted into ciphertext using the given keyword.
